@@ -22,7 +22,15 @@ def run_12ECG_classifier(data,header_data,classes,model):
     
     tmp_score = model.predict([feats_reshape,feats_external])  #输出维度(1,9)
     
-    tmp_label = np.where(tmp_score>0.12,1,0)
+    tmp_label = np.where(tmp_score>0.13,1,0)
+    for i in range(num_classes):
+        if np.sum(tmp_label)==0:
+            max_index=np.argmax(tmp_score)
+            tmp_label[0,max_index]=1
+        if np.sum(tmp_label)>3:
+            sort_index=np.argsort(tmp_score)
+            min_index=sort_index[:6]
+            tmp_label[0,min_index]=0
     
     for i in range(num_classes):
         current_label[i] = np.array(tmp_label[0][i])
